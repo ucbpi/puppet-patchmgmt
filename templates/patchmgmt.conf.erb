@@ -1,0 +1,15 @@
+# Managed by puppet in class patchmgmt 
+#
+# Rebuild the yum cache?
+<% if @clean_r -%>
+MAKE_YUM_CACHE="yes"
+<% else -%>
+MAKE_YUM_CACHE="no"
+<% end -%>
+
+# Run automatic yum updates (on a weekly schedule)?
+<% if @patch_r -%>
+RUN_YUM_UPDATES="yes"
+<% else -%>
+RUN_YUM_UPDATES="no"
+<% end -%>

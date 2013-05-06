@@ -1,0 +1,31 @@
+#!/usr/bin/python
+# This file managed by puppet in class patchmgmt
+
+import os
+import re
+import sys
+
+if len(sys.argv) != 2:
+    print "Usage: %s FLAG"%sys.argv[0]
+    print "  Where FLAG is what to search for in the repo config."
+    print "  example: ucb_list_enabled"
+    sys.exit(1)
+matching = sys.argv[1]
+
+matched_repos = []
+
+for fn in os.listdir('/etc/yum.repos.d'):
+    if not fn.endswith('.repo'): continue
+    reponame = None
+    for line in open(os.path.join('/etc/yum.repos.d', fn)):
+        line = line.strip()
+        if line and line[0] == '#': continue
+        m = re.match(r'^\[(.*?)].*$', line)
+        if m:
+            reponame = m.group(1)
+            continue
+        m = re.match(r'^%s=([01]).*$'%matching, line)
+        if m and int(m.group(1))==1:
+            matched_repos.append(reponame)
+
+print ','.join(matched_repos)

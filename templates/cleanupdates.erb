@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# Run manually with argument "now" to omit delay:
+# /usr/local/sbin/cleanupdates now
+
+# Email address to send output.  Resolved by local aliases file.
+TARGET='<%= @clean_email_r %>'
+DELAY="-R <%= @clean_splay_r %>"
+
+. /etc/patchmgmt.conf
+
+if [ "$1" = "now" ]; then
+  DELAY=""
+fi
+
+ADDITIONAL_REPOS=`/usr/local/sbin/print_enabled_repos ucb_list_enabled`
+if [ -n "$ADDITIONAL_REPOS" ]; then
+    ADDITIONAL_REPOS="--enablerepo=$ADDITIONAL_REPOS"
+fi
+
+if [ "$MAKE_YUM_CACHE" = "yes" ]; then
+    OUTPUT=""
+    OUTPUT="$OUTPUT"$(/usr/bin/yum $DELAY -e 0 -d 0 clean all 2>&1)
+    OUTPUT="$OUTPUT"$(/usr/bin/yum makecache 2>&1)
+    OUTPUT="$OUTPUT"$(/usr/bin/yum -y --downloadonly update 2>&1)
+    # Try to find out if there's an error
+    yum check-update -C -q -e 0 -d 0 >/dev/null 2>&1
+    RETVAL=$?
+    OUTPUT="$OUTPUT""\n\n"
+    OUTPUT="$OUTPUT""The following is for information only, these updates\n"
+    OUTPUT="$OUTPUT""will not automatically be applied.\n"
+    OUTPUT="$OUTPUT""\n"
+    OUTPUT="$OUTPUT"$(/usr/bin/yum -y --downloadonly --disableexcludes=all $ADDITIONAL_REPOS update 2>&1)
+
+    if [ $RETVAL -eq 0 ] || [ $RETVAL -eq 100 ]; then
+	echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t cleanupdates
+	echo -e "$OUTPUT"|/bin/mail -s "OK: package cache update on ${HOSTNAME}" $TARGET
+    else
+	echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t cleanupdates
+	echo -e "$OUTPUT"|/bin/mail -s "ERROR: package cache update on ${HOSTNAME}" $TARGET
+    fi
+else
+    echo "Automatic patch caching is currently disabled on ${HOSTNAME}."|/usr/bin/logger -p local2.info -t cleanupdates
+    echo "Automatic patch caching is currently disabled on ${HOSTNAME}." | /bin/mail -s "WARNING: automatic patch caching disabled on ${HOSTNAME}" $TARGET
+fi

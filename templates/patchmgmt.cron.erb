@@ -1,0 +1,11 @@
+# .------------------ minute (0 - 59)
+# |   .-------------- hour_r (0 - 23)
+# |  |  .------------ day_r of month (1 - 31)
+# |  |  |  .--------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .------ day_r of week (0 - 7) (Sunday_r=0 or 7)  OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |   .-- username to run as
+# |  |  |  |  |   |
+# *  *  *  *  *  user command to be executed
+0 <%= @patch_hour_r %> * * <%= @patch_day_r %> root /usr/local/sbin/runupdates
+0 <%= @list_hour_r %> * * <%= @list_day_r %> root /usr/local/sbin/listupdates
+0 <%= @clean_hour_r %> * * <%= @clean_day_r %> root /usr/local/sbin/cleanupdates

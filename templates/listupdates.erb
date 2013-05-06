@@ -1,0 +1,64 @@
+#!/bin/bash
+# This file managed by puppet in 'site'
+
+# Run manually with argument "now" to omit delay:
+# /usr/local/sbin/listupdates now
+
+# Email address to send output.  Resolved by local aliases file.
+TARGET='<%= @list_email_r %>'
+DELAY="-R <%= @list_splay_r %>"
+
+. /etc/patchmgmt.conf
+
+if [ "$1" = "now" ]; then
+  DELAY=""
+fi
+
+ADDITIONAL_REPOS=`/usr/local/sbin/print_enabled_repos ucb_list_enabled`
+if [ -n "$ADDITIONAL_REPOS" ]; then
+    ADDITIONAL_REPOS="--enablerepo=$ADDITIONAL_REPOS"
+fi
+
+OUTPUT=""
+if [ "$RUN_YUM_UPDATES" = "yes" ]; then
+    OUTPUT="$OUTPUT""Automatic updates scheduled on ${HOSTNAME} are:\n"
+else
+    OUTPUT="$OUTPUT""Automatic patching is currently disabled on ${HOSTNAME}.\n\n"
+    OUTPUT="$OUTPUT""Pending updates NOT scheduled on this system are:\n"
+fi
+
+OUTPUT="$OUTPUT"$(/usr/bin/yum -C -e 0 -d 0 $DELAY check-update 2>&1)
+RETVALA=$?
+
+OUTPUT="$OUTPUT""\n\n\n\nWith no exclusions pending updates on ${HOSTNAME} would be:\n"
+OUTPUT="$OUTPUT"$(/usr/bin/yum -C -e 0 -d 0 $ADDITIONAL_REPOS --disableexcludes=all check-update 2>&1)
+RETVALB=$?
+
+if [ "$RUN_YUM_UPDATES" = "yes" ]; then
+    if [ $RETVALA -eq 1 ] || [ $RETVALB -eq 1 ]; then
+	OUTPUT="${HOSTNAME}'s yum check-update returned error 1 (general error)""$OUTPUT"
+	echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t listupdates
+	echo -e "$OUTPUT"| /bin/mail -s "ERROR: outstanding patches on ${HOSTNAME}" $TARGET
+	exit 0
+    fi
+
+    if [ $RETVALA -eq 100 ] || [ $RETVALB -eq 100 ]; then
+	echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t listupdates
+	echo -e "$OUTPUT"| /bin/mail -s "OK: outstanding patches on ${HOSTNAME}" $TARGET
+	exit 0
+    fi
+
+    if [ $RETVALA -eq 0 ] && [ $RETVALB -eq 0 ]; then
+	# no updates
+	echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t listupdates
+	echo -e "$OUTPUT"| /bin/mail -s "OK: no outstanding patches on ${HOSTNAME}" $TARGET
+	exit 0
+    fi
+
+    OUTPUT="${HOSTNAME}'s yum check-update returned error ${RETVAL} (unknown error)\n\n""$OUTPUT"
+    echo -e "$OUTPUT"|/usr/bin/logger -p local2.warn -t listupdates
+    echo -e "$OUTPUT"| /bin/mail -s "ERROR: outstanding patches on ${HOSTNAME}" $TARGET
+else
+    echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t listupdates
+    echo -e "$OUTPUT" | /bin/mail -s "WARNING: automatic patching disabled on ${HOSTNAME}" $TARGET
+fi

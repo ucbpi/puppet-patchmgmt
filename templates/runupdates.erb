@@ -1,0 +1,55 @@
+#!/bin/sh
+# This file is managed by puppet in class 'site'
+
+# Run manually with argument "now" to omit delay:
+# /usr/local/sbin/runupdates now
+
+# Email address to send output.  Resolved by local aliases file.
+TARGET='<%= @patch_email_r %>'
+DELAY="-R <%= @patch_splay_r %>"
+
+. /etc/patchmgmt.conf
+
+if [ "$1" = "now" ]; then
+  DELAY=""
+fi
+
+OUTPUT=""
+
+if [ "$RUN_YUM_UPDATES" = "yes" ]; then
+    /usr/bin/yum -C -q -e 0 -d 0 $DELAY $ADDITIONAL_REPOS check-update > /dev/null 2>&1
+    RETVAL=$?
+
+    if [ $RETVAL -eq 0 ]; then
+	OUTPUT="$OUTPUT""No pending updates to apply.\n"
+        echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t runupdates
+	echo -e "$OUTPUT"|/bin/mail -s "OK: no updates on ${HOSTNAME}" $TARGET
+	exit 0
+    fi
+
+    if [ -n "$YUM_PRE_COMMAND" ]; then
+	OUTPUT="$OUTPUT"$(/bin/sh -c "$YUM_PRE_COMMAND" 2>&1)
+	OUTPUT="$OUTPUT""\n\n"
+    fi
+    OUTPUT="$OUTPUT"$(/usr/bin/yum -y -C update yum 2>&1)
+    OUTPUT="$OUTPUT""\n\n"
+    OUTPUT="$OUTPUT"$(/usr/bin/yum -y -C update 2>&1)
+    RETVAL=$?
+    if [ -n "$YUM_POST_COMMAND" ]; then
+	OUTPUT="$OUTPUT""\n\n"
+	OUTPUT="$OUTPUT"$(/bin/sh -c "$YUM_POST_COMMAND" 2>&1)
+	OUTPUT="$OUTPUT""\n\n"
+    fi
+
+    if [ $RETVAL -eq 0 ]; then
+        echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t runupdates
+	echo -e "$OUTPUT"|/bin/mail -s "OK: patching on ${HOSTNAME}" $TARGET
+    else
+        echo -e "$OUTPUT"|/usr/bin/logger -p local2.warn -t runupdates
+	echo -e "$OUTPUT"|/bin/mail -s "ERROR: patching on ${HOSTNAME}" $TARGET
+    fi
+else
+    OUTPUT="$OUTPUT""Automatic patching is currently disabled on ${HOSTNAME}."
+    echo -e "$OUTPUT"|/usr/bin/logger -p local2.info -t runupdates
+    echo -e "$OUTPUT"| /bin/mail -s "WARNING: automatic patching disabled on ${HOSTNAME}" $TARGET
+fi
