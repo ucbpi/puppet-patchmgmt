@@ -1,0 +1,6 @@
+[submodule "spec/fixtures/modules/oski"]
+	path = spec/fixtures/modules/oski
+	url = https://github.com/arusso/puppet-oski
+[submodule "spec/fixtures/modules/stdlib"]
+	path = spec/fixtures/modules/stdlib
+	url = https://github.com/puppetlabs/puppetlabs-stdlib

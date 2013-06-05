@@ -76,7 +76,7 @@ class patchmgmt (
   #
   $clean_r = any2bool( $clean )
   $list_r = any2bool( $list )
-  $patch_r = any2bool( $patch_r )
+  $patch_r = any2bool( $patch )
 
   case downcase( $clean_day ) {
     /^(mon|tue|wed|thu|fri|sat|sun)$/: { $clean_day_r = downcase( $clean_day ) }
