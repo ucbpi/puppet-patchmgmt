@@ -12,7 +12,6 @@ This module provides mechanisms to assist with patch management
     clean_email => 'clean-patchmgmt@localhost',
     clean_hour  => '10',  # start at 10am
     clean_splay => '120', # 2 hour splay
-    list        => true,
     list_day    => 'tues',
     list_email  => 'list-patchmgmt@localhost',
     list_hour   => '14', # start at 2pm
