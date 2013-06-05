@@ -1,0 +1,14 @@
+rvm: 1.8.7
+
+branches:
+  only:
+    - master
+    - /^issues\/.*$/
+
+  notifications:
+    email:
+      - arusso@berkeley.edu
+
+env:
+  - PUPPET_VERSION=2.6.18
+  - PUPPET_VERSION=2.7.21
