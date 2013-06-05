@@ -19,10 +19,6 @@
 #   Cleaning of cache will be delayed by up to $clean_splay to combat against
 #   thundering herds
 #
-# [*list*]
-#   Should we list updates to be installed? Useful for emailing the day before
-#   patching, in case one needs to take a quick looksie.
-#
 # [*list_day*]
 #   What day should we list the updates? (mon/tue/wed/thu/fri/sat/sun)
 #
@@ -60,7 +56,6 @@ class patchmgmt (
   $clean_email = undef,
   $clean_hour = undef,
   $clean_splay = 120,
-  $list = true,
   $list_day = undef,
   $list_email = undef,
   $list_hour = undef,
@@ -75,7 +70,6 @@ class patchmgmt (
   # LOGIC KUNG FOO
   #
   $clean_r = any2bool( $clean )
-  $list_r = any2bool( $list )
   $patch_r = any2bool( $patch )
 
   case downcase( $clean_day ) {
