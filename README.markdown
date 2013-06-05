@@ -1,4 +1,5 @@
-# patchmgmt Module #
+# Patch Management Module #
+[![Build Status](https://travis-ci.org/arusso/puppet-patchmgmt.png?branch=master)](https://travis-ci.org/arusso/puppet-patchmgmt)
 
 This module provides mechanisms to assist with patch management
 
