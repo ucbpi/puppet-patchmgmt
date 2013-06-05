@@ -146,7 +146,7 @@ class patchmgmt (
     mode    => '0550',
     owner   => 'root',
     group   => 'root',
-    content => template('patchmgmt/runupdates.erb'),
+    content => template('patchmgmt/listupdates.erb'),
   }
 
   file { '/etc/patchmgmt.conf':
