@@ -7,6 +7,13 @@ MAKE_YUM_CACHE="yes"
 MAKE_YUM_CACHE="no"
 <% end -%>
 
+# List updates
+<% if @list_r -%>
+LIST_YUM_CACHE="yes"
+<% else -%>
+LIST_YUM_CACHE="no"
+<% end -%>
+
 # Run automatic yum updates (on a weekly schedule)?
 <% if @patch_r -%>
 RUN_YUM_UPDATES="yes"
