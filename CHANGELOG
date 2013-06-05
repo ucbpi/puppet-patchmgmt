@@ -1,2 +1,9 @@
+2013-06-05 Aaron Russo <arusso@berkeley.edu> - 0.0.3
+* fixed issue where list updates would run updates if patching was enabled
+* fixed issue where patching was never enabled
+
+2013-06-02 Aaron Russo <arusso@berkeley.edu> - 0.0.2
+* Updating documentation only
+
 2013-05-06 Aaron Russo <arusso@berkeley.edu> - 0.0.1
 * Initial Release

@@ -1,5 +1,5 @@
 name    'arusso-patchmgmt'
-version '0.0.2'
+version '0.0.3'
 source 'https://github.com/arusso/puppet-patchmgmt'
 author 'arusso'
 license 'none'
