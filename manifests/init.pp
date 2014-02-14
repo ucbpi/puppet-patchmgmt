@@ -78,18 +78,9 @@ class patchmgmt (
   $list_r = any2bool( $list )
   $patch_r = any2bool( $patch_r )
 
-  case downcase( $clean_day ) {
-    /^(mon|tue|wed|thu|fri|sat|sun)$/: { $clean_day_r = downcase( $clean_day ) }
-    default: { fail( "Class[${name}] : invalid clean day passed" ) }
-  }
-  case downcase( $list_day ) {
-    /^(mon|tue|wed|thu|fri|sat|sun)$/: { $list_day_r = downcase( $list_day ) }
-    default: { fail( "Class[${name}] : invalid list day passed" ) }
-  }
-  case downcase( $patch_day ) {
-    /^(mon|tue|wed|thu|fri|sat|sun)$/: { $patch_day_r = downcase( $patch_day ) }
-    default: { fail( "Class[${name}] : invaild patch day passed" ) }
-  }
+  $clean_day_r = format_day_of_week( $clean_day, 'lowercase', '3' )
+  $list_day_r = format_day_of_week( $list_day, 'lowercase', '3' )
+  $patch_day_r = format_day_of_week( $patch_day, 'lowercase', '3' )
 
   validate_re( $clean_splay, '^[0-9]+$' )
   $clean_splay_r = $clean_splay
