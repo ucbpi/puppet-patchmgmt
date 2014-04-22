@@ -1,3 +1,6 @@
+2014-04-22 Aaron Russo <arusso@berkeley.edu> - 0.0.4
+* added license info
+
 2013-06-05 Aaron Russo <arusso@berkeley.edu> - 0.0.3
 * fixed issue where list updates would run updates if patching was enabled
 * fixed issue where patching was never enabled

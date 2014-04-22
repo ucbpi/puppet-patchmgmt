@@ -1,8 +1,8 @@
 name    'arusso-patchmgmt'
-version '0.0.3'
+version '0.0.4'
 source 'https://github.com/arusso/puppet-patchmgmt'
 author 'arusso'
-license 'none'
+license 'MIT'
 summary 'A weekly patch management system'
 description "A patch management system designed for weekly patch management.
   This will handle the cleaning of the cache, listing and applying of
