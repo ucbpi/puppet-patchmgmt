@@ -26,7 +26,12 @@ This module provides mechanisms to assist with patch management
 License
 -------
 
-None
+See LICENSE file
+
+Copyright
+---------
+
+Copyright &copy; 2014 The Regents of the University of California
 
 Contact
 -------
