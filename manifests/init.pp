@@ -55,16 +55,16 @@ class patchmgmt (
   $clean_day = undef,
   $clean_email = undef,
   $clean_hour = undef,
-  $clean_splay = 120,
+  $clean_splay = '120',
   $list_day = undef,
   $list_email = undef,
   $list_hour = undef,
-  $list_splay = 120,
+  $list_splay = '120',
   $patch = true,
   $patch_day = undef,
   $patch_email = undef,
   $patch_hour = undef,
-  $patch_splay = 120
+  $patch_splay = '120',
 ) {
   ##############################################################################
   # LOGIC KUNG FOO
